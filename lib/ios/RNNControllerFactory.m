@@ -20,12 +20,12 @@
 - (instancetype)initWithRootViewCreator:(id <RNNRootViewCreator>)creator
 								  store:(RNNStore *)store
 						   eventEmitter:(RNNEventEmitter*)eventEmitter {
-	
+
 	self = [super init];
 	_creator = creator;
 	_store = store;
 	_eventEmitter = eventEmitter;
-	
+
 	return self;
 }
 
@@ -37,42 +37,42 @@
 
 - (UIViewController*)fromTree:(NSDictionary*)json {
 	RNNLayoutNode* node = [RNNLayoutNode create:json];
-	
+
 	UIViewController* result;
-	
+
 	if ( node.isContainer) {
 		result = [self createContainer:node];
 	}
-	
+
 	else if (node.isContainerStack)	{
 		result = [self createContainerStack:node];
 	}
-	
+
 	else if (node.isTabs) {
 		result = [self createTabs:node];
 	}
-	
+
 	else if (node.isSideMenuRoot) {
 		result = [self createSideMenu:node];
 	}
-	
+
 	else if (node.isSideMenuCenter) {
 		result = [self createSideMenuChild:node type:RNNSideMenuChildTypeCenter];
 	}
-	
+
 	else if (node.isSideMenuLeft) {
 		result = [self createSideMenuChild:node type:RNNSideMenuChildTypeLeft];
 	}
 	else if (node.isSideMenuRight) {
 		result = [self createSideMenuChild:node type:RNNSideMenuChildTypeRight];
 	}
-	
+
 	if (!result) {
 		@throw [NSException exceptionWithName:@"UnknownControllerType" reason:[@"Unknown controller type " stringByAppendingString:node.type] userInfo:nil];
 	}
 
 	[_store setContainer:result containerId:node.nodeId];
-	
+
 	return result;
 }
 
@@ -85,36 +85,37 @@
 
 - (RNNNavigationController*)createContainerStack:(RNNLayoutNode*)node {
 	RNNNavigationController* vc = [[RNNNavigationController alloc] init];
-	
+
 	NSMutableArray* controllers = [NSMutableArray new];
 	for (NSDictionary* child in node.children) {
 		[controllers addObject:[self fromTree:child]];
 	}
 	[vc setViewControllers:controllers];
-	
+
 	return vc;
 }
 
 -(RNNTabBarController*)createTabs:(RNNLayoutNode*)node {
 	RNNTabBarController* vc = [[RNNTabBarController alloc] init];
-	
+
 	NSMutableArray* controllers = [NSMutableArray new];
 	for (NSDictionary *child in node.children) {
 		UIViewController* childVc = [self fromTree:child];
 
-		UITabBarItem* item = [[UITabBarItem alloc] initWithTitle:@"A Tab" image:nil tag:1];
+		NSString* title = child[@"children"][0][@"data"][@"navigationOptions"][@"title"] ?: @"A Tab";
+		UITabBarItem* item = [[UITabBarItem alloc] initWithTitle:title image:nil tag:1];
 		[childVc setTabBarItem:item];
 		[controllers addObject:childVc];
 	}
 	[vc setViewControllers:controllers];
-	
+
 	return vc;
 }
 
 - (UIViewController*)createSideMenu:(RNNLayoutNode*)node {
 	NSMutableArray* childrenVCs = [NSMutableArray new];
-	
-	
+
+
 	for (NSDictionary *child in node.children) {
 		UIViewController *vc = [self fromTree:child];
 		[childrenVCs addObject:vc];
@@ -127,7 +128,7 @@
 - (UIViewController*)createSideMenuChild:(RNNLayoutNode*)node type:(RNNSideMenuChildType)type {
 	UIViewController* child = [self fromTree:node.children[0]];
 	RNNSideMenuChildVC *sideMenuChild = [[RNNSideMenuChildVC alloc] initWithChild: child type:type];
-	
+
 	return sideMenuChild;
 }
 
