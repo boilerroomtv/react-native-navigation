@@ -115,6 +115,7 @@ const NSInteger BLUR_TOPBAR_TAG = 78264802;
 		[viewController.navigationController setNavigationBarHidden:[self.topBarHidden boolValue] animated:[self.animateTopBarHide boolValue]];
 	}
 
+#if !(TARGET_OS_TV)
 	if (self.topBarHideOnScroll) {
 		BOOL topBarHideOnScrollBool = [self.topBarHideOnScroll boolValue];
 		if (topBarHideOnScrollBool) {
@@ -123,6 +124,8 @@ const NSInteger BLUR_TOPBAR_TAG = 78264802;
 			viewController.navigationController.hidesBarsOnSwipe = NO;
 		}
 	}
+
+#endif
 
 	if (self.topBarButtonColor) {
 		UIColor* buttonColor = [RCTConvert UIColor:self.topBarButtonColor];
@@ -158,6 +161,7 @@ const NSInteger BLUR_TOPBAR_TAG = 78264802;
 		}
 	}
 
+#if !(TARGET_OS_TV)
 	if (self.statusBarBlur) {
 		UIView* curBlurView = [viewController.view viewWithTag:BLUR_STATUS_TAG];
 		if ([self.statusBarBlur boolValue]) {
@@ -197,6 +201,7 @@ const NSInteger BLUR_TOPBAR_TAG = 78264802;
 			[blur removeFromSuperview];
 		}
 	}
+#endif
 }
 
 -(UIFont *)topBarTextFont {
@@ -232,6 +237,7 @@ const NSInteger BLUR_TOPBAR_TAG = 78264802;
 	return self.tabBarTextFontSize ? [self.tabBarTextFontSize floatValue] : 10;
 }
 
+#if !(TARGET_OS_TV)
 - (UIInterfaceOrientationMask)supportedOrientations {
 	NSArray* orientationsArray = [self.orientation isKindOfClass:[NSString class]] ? @[self.orientation] : self.orientation;
 	NSUInteger supportedOrientationsMask = 0;
@@ -257,6 +263,6 @@ const NSInteger BLUR_TOPBAR_TAG = 78264802;
 
 	return supportedOrientationsMask;
 }
-
+#endif
 
 @end

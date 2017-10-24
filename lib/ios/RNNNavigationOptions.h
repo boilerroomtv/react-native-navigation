@@ -35,8 +35,9 @@ extern const NSInteger BLUR_TOPBAR_TAG;
 @property (nonatomic, strong) NSString* tabBarTextFontFamily;
 @property (nonatomic, strong) NSNumber* tabBarTextFontSize;
 
-
+#if !(TARGET_OS_TV)
 - (UIInterfaceOrientationMask)supportedOrientations;
+#endif
 
 -(instancetype)init;
 -(instancetype)initWithDict:(NSDictionary *)navigationOptions;
