@@ -1,9 +1,11 @@
-const React = require('react');
-const { Component } = require('react');
-
-const { View, Text, Button } = require('react-native');
-
-const Navigation = require('react-native-navigation');
+import React, { Component } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Button
+} from 'react-native';
+import Navigation from 'react-native-navigation';
 
 class TextScreen extends Component {
 
@@ -13,8 +15,8 @@ class TextScreen extends Component {
         <Text style={styles.h1}>{this.props.text || 'Text Screen'}</Text>
         {this.renderTextFromFunctionInProps()}
         <Text style={styles.footer}>{`this.props.containerId = ${this.props.containerId}`}</Text>
-        <Button title={'Set Tab Badge'} onPress={() => this.onButtonPress()} />
-        <Button title="Switch To Tab 2" onPress={() => this.onClickSwitchToTab()} />
+        <Button title={'Hide tab bar'} onPress={this.hideTabBar.bind(this)} />
+        <Button title={'Show tab bar'} onPress={this.showTabBar.bind(this)} />
       </View>
     );
   }
@@ -28,14 +30,18 @@ class TextScreen extends Component {
     );
   }
 
-  onButtonPress() {
-    Navigation.setOptions(this.props.containerId, {
-      tabBadge: `EnCyClOpEdIa`
+  hideTabBar() {
+    Navigation.toggleTabs(this.props.containerId, {
+      hidden: true,
+      animated: true
     });
   }
 
-  onClickSwitchToTab() {
-    Navigation.switchToTab(this.props.containerId, 1);
+  showTabBar() {
+    Navigation.toggleTabs(this.props.containerId, {
+      hidden: false,
+      animated: true
+    });
   }
 }
 module.exports = TextScreen;
